@@ -1,9 +1,8 @@
-package main
+package handler
 
 import (
 	"database/sql"
 	"encoding/json"
-	"fmt"
 	"log"
 	"net/http"
 	"os"
@@ -45,7 +44,7 @@ func HandleRequest(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(sets)
 }
 
-func main() {
+func init() {
 	// Load env
 	err := godotenv.Load()
 	if err != nil {
@@ -58,18 +57,9 @@ func main() {
 	if err != nil {
 		log.Fatalf("Error opening database: %v", err)
 	}
-	defer db.Close()
 
 	err = db.Ping()
 	if err != nil {
 		log.Fatalf("Cannot connect to database: %v", err)
 	}
-
-	// Setup HTTP route
-	http.HandleFunc("/", HandleRequest)
-
-	// Start server
-	port := "8080"
-	fmt.Println("Server running on port:", port)
-	log.Fatal(http.ListenAndServe(":"+port, nil))
 }
