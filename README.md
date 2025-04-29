@@ -7,8 +7,6 @@ This project is a simple Go API that connects to a PostgreSQL database and provi
 
 ```
 go-lego-api/
-├── Makefile            # Contains build commands and other utility tasks
-├── db.go               # Contains database connection and querying logic
 ├── lego_sets.sql       # SQL file with schema and sample data for the Lego table
 ├── .env                # Environment file for storing sensitive information like database URL
 ├── main.go             # Main file that starts the HTTP server and handles requests
