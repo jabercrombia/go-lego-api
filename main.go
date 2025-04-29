@@ -14,13 +14,36 @@ import (
 
 // LegoSet represents a sample row
 type LegoSet struct {
-	ID           int            `json:"id"`
-	Name         string         `json:"name"`
-	Theme        string         `json:"theme"`
-	ThumbnailUrl sql.NullString `json:"thumbnailurl"`
+	ID           int    `json:"id"`
+	Name         string `json:"name"`
+	Theme        string `json:"theme"`
+	ThumbnailUrl string `json:"thumbnailurl"`
 }
 
 var db *sql.DB
+
+// HandleRequest is the exported function that Vercel needs
+func HandleRequest(w http.ResponseWriter, r *http.Request) {
+	rows, err := db.Query("SELECT id, name, theme, thumbnailurl FROM lego_table LIMIT 10")
+	if err != nil {
+		http.Error(w, "Database error", http.StatusInternalServerError)
+		return
+	}
+	defer rows.Close()
+
+	var sets []LegoSet
+	for rows.Next() {
+		var set LegoSet
+		if err := rows.Scan(&set.ID, &set.Name, &set.Theme, &set.ThumbnailUrl); err != nil {
+			http.Error(w, "Scan error", http.StatusInternalServerError)
+			return
+		}
+		sets = append(sets, set)
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+	json.NewEncoder(w).Encode(sets)
+}
 
 func main() {
 	// Load env
@@ -43,32 +66,10 @@ func main() {
 	}
 
 	// Setup HTTP route
-	http.HandleFunc("/legosets", getLegoSets)
+	http.HandleFunc("/", HandleRequest)
 
 	// Start server
 	port := "8080"
 	fmt.Println("Server running on port:", port)
 	log.Fatal(http.ListenAndServe(":"+port, nil))
-}
-
-func getLegoSets(w http.ResponseWriter, r *http.Request) {
-	rows, err := db.Query("SELECT id, name, theme, thumbnailurl FROM lego_table LIMIT 10")
-	if err != nil {
-		http.Error(w, "Database error", http.StatusInternalServerError)
-		return
-	}
-	defer rows.Close()
-
-	var sets []LegoSet
-	for rows.Next() {
-		var set LegoSet
-		if err := rows.Scan(&set.ID, &set.Name, &set.Theme, &set.ThumbnailUrl); err != nil {
-			http.Error(w, "Scan error", http.StatusInternalServerError)
-			return
-		}
-		sets = append(sets, set)
-	}
-
-	w.Header().Set("Content-Type", "application/json")
-	json.NewEncoder(w).Encode(sets)
 }
