@@ -1,9 +1,8 @@
-package main
+package handler
 
 import (
 	"database/sql"
 	"encoding/json"
-	"fmt"
 	"log"
 	"net/http"
 	"os"
@@ -22,15 +21,8 @@ type LegoSet struct {
 
 var db *sql.DB
 
-// HandleRequest is the function that serves the data from the database
+// HandleRequest is the exported function that Vercel needs
 func HandleRequest(w http.ResponseWriter, r *http.Request) {
-	// Check if the path is correct
-	if r.URL.Path != "/api/legosets" {
-		http.Error(w, "Not Found", http.StatusNotFound)
-		return
-	}
-
-	// Query to get Lego sets from the table
 	rows, err := db.Query("SELECT id, name, theme, thumbnailurl FROM lego_table LIMIT 10")
 	if err != nil {
 		http.Error(w, "Database error", http.StatusInternalServerError)
@@ -48,19 +40,18 @@ func HandleRequest(w http.ResponseWriter, r *http.Request) {
 		sets = append(sets, set)
 	}
 
-	// Respond with JSON
 	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(sets)
 }
 
 func init() {
-	// Load .env file
-	err := godotenv.Load("../.env")
+	// Load env
+	err := godotenv.Load()
 	if err != nil {
 		log.Fatal("Error loading .env file")
 	}
 
-	// Connect to the database
+	// Connect to Postgres
 	dbURL := os.Getenv("POSTGRES_URL")
 	db, err = sql.Open("postgres", dbURL)
 	if err != nil {
@@ -71,12 +62,4 @@ func init() {
 	if err != nil {
 		log.Fatalf("Cannot connect to database: %v", err)
 	}
-}
-
-func main() {
-	// Set up the route and start the server
-	http.HandleFunc("/api/legosets", HandleRequest)
-	port := "8080"
-	fmt.Println("Server running on port:", port)
-	log.Fatal(http.ListenAndServe(":"+port, nil))
 }

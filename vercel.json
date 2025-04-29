@@ -2,18 +2,15 @@
     "version": 2,
     "builds": [
       {
-        "src": "api/main.go",
+        "src": "api/handler.go",
         "use": "@vercel/go"
       }
     ],
     "routes": [
       {
         "src": "/api/legosets",
-        "dest": "/api/main.go"
+        "dest": "/api/handler.go"
       }
-    ],
-    "env": {
-      "POSTGRES_URL": "@postgres-url" 
-    }
+    ]
   }
   
