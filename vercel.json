@@ -1,16 +1,7 @@
 {
     "version": 2,
-    "builds": [
-      {
-        "src": "api/handler.go",
-        "use": "@vercel/go"
-      }
-    ],
     "routes": [
-      {
-        "src": "/api/legosets",
-        "dest": "/api/handler.go"
-      }
+      { "src": "/api/(.*)", "dest": "/api/$1.go" }
     ]
   }
   
