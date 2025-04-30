@@ -7,10 +7,12 @@ This project is a simple Go API that connects to a PostgreSQL database and provi
 
 ```
 go-lego-api/
-├── lego_sets.sql       # SQL file with schema and sample data for the Lego table
-├── .env                # Environment file for storing sensitive information like database URL
-├── main.go             # Main file that starts the HTTP server and handles requests
-├── README.md           # Project summary and instructions
+├── api/
+│   └── handler.go          # API entry point (package handler, required for Vercel)
+├── sql/
+|   └── lego_sets.sql    # SQL file with schema and sample LEGO data
+├── .env                 # Environment variables (e.g., PostgreSQL URL)
+├── README.md            # Project overview and setup instructions
 ```
 
 ## Setup Instructions
@@ -18,7 +20,7 @@ go-lego-api/
 1. Clone the repository:
 
 ```bash
-git clone https://github.com/yourusername/go-lego-api.git
+git clone https://github.com/jabercrombia/go-lego-api.git
 cd go-lego-api
 ```
 

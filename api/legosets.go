@@ -1,17 +1,14 @@
-package handler
+package main
 
 import (
 	"database/sql"
 	"encoding/json"
-	"log"
 	"net/http"
 	"os"
 
-	"github.com/joho/godotenv"
 	_ "github.com/lib/pq"
 )
 
-// LegoSet represents a sample row
 type LegoSet struct {
 	ID           int     `json:"id"`
 	Name         string  `json:"name"`
@@ -21,8 +18,16 @@ type LegoSet struct {
 
 var db *sql.DB
 
-// HandleRequest is the exported function that Vercel needs
-func HandleRequest(w http.ResponseWriter, r *http.Request) {
+func init() {
+	var err error
+	dbURL := os.Getenv("POSTGRES_URL")
+	db, err = sql.Open("postgres", dbURL)
+	if err != nil {
+		panic("Failed to connect to DB: " + err.Error())
+	}
+}
+
+func Handler(w http.ResponseWriter, r *http.Request) {
 	rows, err := db.Query("SELECT id, name, theme, thumbnailurl FROM lego_table LIMIT 10")
 	if err != nil {
 		http.Error(w, "Database error", http.StatusInternalServerError)
@@ -42,24 +47,4 @@ func HandleRequest(w http.ResponseWriter, r *http.Request) {
 
 	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(sets)
-}
-
-func init() {
-	// Load env
-	err := godotenv.Load()
-	if err != nil {
-		log.Fatal("Error loading .env file")
-	}
-
-	// Connect to Postgres
-	dbURL := os.Getenv("POSTGRES_URL")
-	db, err = sql.Open("postgres", dbURL)
-	if err != nil {
-		log.Fatalf("Error opening database: %v", err)
-	}
-
-	err = db.Ping()
-	if err != nil {
-		log.Fatalf("Cannot connect to database: %v", err)
-	}
 }
