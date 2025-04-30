@@ -1,7 +1,15 @@
 {
     "version": 2,
     "routes": [
-      { "src": "/api/(.*)", "dest": "/api/$1.go" }
+      { "src": "/api/(.*)", "dest": "/api/$1.go" },
+      {
+        "src": "^/$",
+        "dest": "/static/index.html"
+      },
+      {
+        "src": "^/static/(.*)$",
+        "dest": "/static/$1"
+      }
     ]
   }
   

@@ -1,48 +1,67 @@
-package handler
+package api
 
 import (
 	"database/sql"
 	"encoding/json"
+	"fmt"
 	"net/http"
 	"os"
 
-	_ "github.com/lib/pq"
+	_ "github.com/lib/pq" // Import the PostgreSQL driver
 )
 
-type LegoSet struct {
-	SetID  string `json:"set_id"`
-	Name   string `json:"name"`
-	Year   int    `json:"year"`
-	ID     int    `json:"id"`
-	Pieces int    `json:"pieces"`
-}
+// LegoHandler responds to /api/lego requests
+func LegoHandler(w http.ResponseWriter, r *http.Request) {
+	// Retrieve DB connection URL from environment variable
+	dbURL := os.Getenv("POSTGRES_URL")
+	if dbURL == "" {
+		http.Error(w, "POSTGRES_URL environment variable not set", http.StatusInternalServerError)
+		return
+	}
 
-// This is the function Vercel looks for
-func Handler(w http.ResponseWriter, r *http.Request) {
-	db, err := sql.Open("postgres", os.Getenv("POSTGRES_URL"))
+	// Connect to PostgreSQL DB
+	db, err := sql.Open("postgres", dbURL)
 	if err != nil {
-		http.Error(w, "Failed to connect to DB", http.StatusInternalServerError)
+		http.Error(w, fmt.Sprintf("Failed to connect to database: %v", err), http.StatusInternalServerError)
 		return
 	}
 	defer db.Close()
 
-	rows, err := db.Query("SELECT set_id, name, year, id, pieces FROM lego_table LIMIT 10")
+	// Query database to fetch Lego sets
+	rows, err := db.Query("SELECT set_id, name, year, id FROM lego_table LIMIT 10")
 	if err != nil {
-		http.Error(w, "Query error", http.StatusInternalServerError)
+		http.Error(w, fmt.Sprintf("Query error: %v", err), http.StatusInternalServerError)
 		return
 	}
 	defer rows.Close()
 
-	var sets []LegoSet
+	// Prepare response data
+	var legoSets []map[string]interface{}
 	for rows.Next() {
-		var set LegoSet
-		if err := rows.Scan(&set.SetID, &set.Name, &set.Year, &set.ID, &set.Pieces); err != nil {
-			http.Error(w, "Scan error", http.StatusInternalServerError)
+		var setID, name string
+		var year, id int
+		if err := rows.Scan(&setID, &name, &year, &id); err != nil {
+			http.Error(w, fmt.Sprintf("Scan error: %v", err), http.StatusInternalServerError)
 			return
 		}
-		sets = append(sets, set)
+
+		legoSets = append(legoSets, map[string]interface{}{
+			"set_id": setID,
+			"name":   name,
+			"year":   year,
+			"id":     id,
+		})
 	}
 
+	// Check for row iteration error
+	if err := rows.Err(); err != nil {
+		http.Error(w, fmt.Sprintf("Row iteration error: %v", err), http.StatusInternalServerError)
+		return
+	}
+
+	// Respond with the data in JSON format
 	w.Header().Set("Content-Type", "application/json")
-	json.NewEncoder(w).Encode(sets)
+	if err := json.NewEncoder(w).Encode(legoSets); err != nil {
+		http.Error(w, fmt.Sprintf("JSON encoding error: %v", err), http.StatusInternalServerError)
+	}
 }
