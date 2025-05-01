@@ -10,6 +10,75 @@ import (
 	_ "github.com/lib/pq" // PostgreSQL driver
 )
 
+// FetchLegoSetByID retrieves LEGO set details by ID.
+func FetchLegoSetByID(db *sql.DB, id string) (map[string]interface{}, error) {
+	// Query to fetch LEGO set by ID
+	row := db.QueryRow("SELECT set_id, name, year, theme, subtheme, themegroup, category, pieces, minifigs, agerange_min, us_retailprice, brickseturl, thumbnailurl, imageurl, id FROM lego_table WHERE id = $1", id)
+
+	// Variables to store the result
+	var setID, name, theme, category, brickseturl string
+	var year, idInt int
+
+	// Use sql.Null* for nullable fields
+	var nullableSubtheme sql.NullString
+	var nullableThemegroup sql.NullString
+	var nullableMinifigs sql.NullInt32
+	var nullablePieces sql.NullInt32
+	var nullableAgerangeMin sql.NullInt32
+	var nullableUsRetailPrice sql.NullFloat64
+	var nullableThumbnailURL sql.NullString
+	var nullableImageURL sql.NullString
+
+	// Scan the result into variables
+	if err := row.Scan(&setID, &name, &year, &theme, &nullableSubtheme, &nullableThemegroup, &category, &nullablePieces, &nullableMinifigs, &nullableAgerangeMin, &nullableUsRetailPrice, &brickseturl, &nullableThumbnailURL, &nullableImageURL, &idInt); err != nil {
+		if err == sql.ErrNoRows {
+			return nil, fmt.Errorf("LEGO set not found")
+		}
+		return nil, fmt.Errorf("Scan error: %v", err)
+	}
+
+	// Handle nullable fields using utility functions
+	return map[string]interface{}{
+		"set_id":         setID,
+		"name":           name,
+		"year":           year,
+		"theme":          theme,
+		"subtheme":       getNullableString(nullableSubtheme),
+		"themegroup":     getNullableString(nullableThemegroup),
+		"category":       category,
+		"pieces":         getNullableInt(nullablePieces),
+		"minifigs":       getNullableInt(nullableMinifigs),
+		"agerange_min":   getNullableInt(nullableAgerangeMin),
+		"us_retailprice": getNullableFloat(nullableUsRetailPrice),
+		"brickseturl":    brickseturl,
+		"thumbnailurl":   getNullableString(nullableThumbnailURL),
+		"imageurl":       getNullableString(nullableImageURL),
+		"id":             idInt,
+	}, nil
+}
+
+// Helper functions for nullable fields
+func getNullableString(value sql.NullString) string {
+	if value.Valid {
+		return value.String
+	}
+	return ""
+}
+
+func getNullableInt(value sql.NullInt32) int {
+	if value.Valid {
+		return int(value.Int32)
+	}
+	return 0
+}
+
+func getNullableFloat(value sql.NullFloat64) float64 {
+	if value.Valid {
+		return value.Float64
+	}
+	return 0.0
+}
+
 // GetAllLegoSets godoc
 // @Summary Get all LEGO sets
 // @Description Returns a list of all LEGO sets in the database
@@ -45,12 +114,12 @@ func GetAllLegoSets(w http.ResponseWriter, r *http.Request) {
 	// Prepare response data
 	var legoSets []map[string]interface{}
 	for rows.Next() {
-		var setID, name, theme, subtheme, themegroup, category, brickseturl, thumbnailurl, imageurl string
+		var setID, name, theme, category, brickseturl string
 		var year, id int
 
 		// Use sql.NullString for nullable fields
 		var nullableSubtheme sql.NullString
-		var nullableThemegroup sql.NullString // Change to sql.NullString
+		var nullableThemegroup sql.NullString
 		var nullableMinifigs sql.NullInt32
 		var nullablePieces sql.NullInt32
 		var nullableAgerangeMin sql.NullInt32
@@ -64,66 +133,22 @@ func GetAllLegoSets(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 
-		// Handle nullable fields by checking if they are valid
-		subtheme = "" // Initialize subtheme to an empty string
-		if nullableSubtheme.Valid {
-			subtheme = nullableSubtheme.String
-		}
-
-		themegroup = "" // Initialize themegroup to an empty string
-		if nullableThemegroup.Valid {
-			themegroup = nullableThemegroup.String
-		}
-
-		minifigs := 0 // Default value
-		if nullableMinifigs.Valid {
-			minifigs = int(nullableMinifigs.Int32)
-		}
-
-		pieces := 0 // Default value
-		if nullablePieces.Valid {
-			pieces = int(nullablePieces.Int32)
-		}
-
-		agerangeMin := 0 // Default value
-		if nullableAgerangeMin.Valid {
-			agerangeMin = int(nullableAgerangeMin.Int32)
-		}
-
-		// For nullableUsRetailPrice, set default value to 0.0 if NULL
-		usRetailPrice := 0.0
-		if nullableUsRetailPrice.Valid {
-			usRetailPrice = nullableUsRetailPrice.Float64
-		}
-
-		// Handle nullableThumbnailURL by checking if it's valid
-		thumbnailurl = "" // Initialize thumbnailurl to an empty string
-		if nullableThumbnailURL.Valid {
-			thumbnailurl = nullableThumbnailURL.String
-		}
-
-		// Handle nullableImageURL by checking if it's valid
-		imageurl = "" // Initialize imageurl to an empty string
-		if nullableImageURL.Valid {
-			imageurl = nullableImageURL.String
-		}
-
 		// Append each lego set to the response slice
 		legoSets = append(legoSets, map[string]interface{}{
 			"set_id":         setID,
 			"name":           name,
 			"year":           year,
 			"theme":          theme,
-			"subtheme":       subtheme,   // Optional field
-			"themegroup":     themegroup, // Optional field
+			"subtheme":       getNullableString(nullableSubtheme),
+			"themegroup":     getNullableString(nullableThemegroup),
 			"category":       category,
-			"pieces":         pieces,        // Optional field
-			"minifigs":       minifigs,      // Optional field
-			"agerange_min":   agerangeMin,   // Optional field
-			"us_retailprice": usRetailPrice, // Optional field
+			"pieces":         getNullableInt(nullablePieces),
+			"minifigs":       getNullableInt(nullableMinifigs),
+			"agerange_min":   getNullableInt(nullableAgerangeMin),
+			"us_retailprice": getNullableFloat(nullableUsRetailPrice),
 			"brickseturl":    brickseturl,
-			"thumbnailurl":   thumbnailurl, // Optional field
-			"imageurl":       imageurl,     // Optional field
+			"thumbnailurl":   getNullableString(nullableThumbnailURL),
+			"imageurl":       getNullableString(nullableImageURL),
 			"id":             id,
 		})
 	}
@@ -137,6 +162,54 @@ func GetAllLegoSets(w http.ResponseWriter, r *http.Request) {
 	// Respond with the data in JSON format
 	w.Header().Set("Content-Type", "application/json")
 	if err := json.NewEncoder(w).Encode(legoSets); err != nil {
+		http.Error(w, fmt.Sprintf("JSON encoding error: %v", err), http.StatusInternalServerError)
+	}
+}
+
+// GetLegoSetByID godoc
+// @Summary Get a LEGO set by ID
+// @Description Retrieves a LEGO set by its ID
+// @Tags lego
+// @Produce json
+// @Param id path int true "LEGO Set ID"
+// @Success 200 {object} map[string]interface{}
+// @Failure 404 {object} map[string]string
+// @Failure 500 {object} map[string]string
+// @Router /api/sets/{id} [get]
+func GetLegoSetByID(w http.ResponseWriter, r *http.Request) {
+	// Retrieve DB connection URL from environment variable
+	dbURL := os.Getenv("POSTGRES_URL")
+	if dbURL == "" {
+		http.Error(w, "POSTGRES_URL environment variable not set", http.StatusInternalServerError)
+		return
+	}
+
+	// Connect to PostgreSQL DB
+	db, err := sql.Open("postgres", dbURL)
+	if err != nil {
+		http.Error(w, fmt.Sprintf("Failed to connect to database: %v", err), http.StatusInternalServerError)
+		return
+	}
+	defer db.Close()
+
+	// Get the set ID from the URL parameters
+	id := r.URL.Path[len("/api/sets/"):]
+
+	if id == "" {
+		http.Error(w, "ID is required", http.StatusBadRequest)
+		return
+	}
+
+	// Fetch the LEGO set by ID using the helper function
+	legoSet, err := FetchLegoSetByID(db, id)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	// Respond with the LEGO set data in JSON format
+	w.Header().Set("Content-Type", "application/json")
+	if err := json.NewEncoder(w).Encode(legoSet); err != nil {
 		http.Error(w, fmt.Sprintf("JSON encoding error: %v", err), http.StatusInternalServerError)
 	}
 }

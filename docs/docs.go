@@ -15,16 +15,16 @@ const docTemplate = `{
     "host": "{{.Host}}",
     "basePath": "{{.BasePath}}",
     "paths": {
-        "/api/lego": {
+        "/api/sets": {
             "get": {
-                "description": "Returns a list of LEGO sets from the database",
+                "description": "Returns a list of all LEGO sets in the database",
                 "produces": [
                     "application/json"
                 ],
                 "tags": [
                     "lego"
                 ],
-                "summary": "Get LEGO sets",
+                "summary": "Get all LEGO sets",
                 "responses": {
                     "200": {
                         "description": "OK",
@@ -33,6 +33,54 @@ const docTemplate = `{
                             "items": {
                                 "type": "object",
                                 "additionalProperties": true
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/sets/{id}": {
+            "get": {
+                "description": "Retrieves a LEGO set by its ID",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "lego"
+                ],
+                "summary": "Get a LEGO set by ID",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "LEGO Set ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
                             }
                         }
                     },

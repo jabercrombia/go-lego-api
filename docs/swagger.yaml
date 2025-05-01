@@ -1,9 +1,9 @@
 info:
   contact: {}
 paths:
-  /api/lego:
+  /api/sets:
     get:
-      description: Returns a list of LEGO sets from the database
+      description: Returns a list of all LEGO sets in the database
       produces:
       - application/json
       responses:
@@ -20,7 +20,39 @@ paths:
             additionalProperties:
               type: string
             type: object
-      summary: Get LEGO sets
+      summary: Get all LEGO sets
+      tags:
+      - lego
+  /api/sets/{id}:
+    get:
+      description: Retrieves a LEGO set by its ID
+      parameters:
+      - description: LEGO Set ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties: true
+            type: object
+        "404":
+          description: Not Found
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Get a LEGO set by ID
       tags:
       - lego
 swagger: "2.0"

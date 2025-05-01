@@ -8,11 +8,12 @@ This project is a simple Go API that connects to a PostgreSQL database and provi
 ```
 go-lego-api/
 ├── api/
-│   └── handler.go          # API entry point (package handler, required for Vercel)
+│   └── sets.go          # API entry point 
 ├── sql/
 |   └── lego_sets.sql    # SQL file with schema and sample LEGO data
 ├── .env                 # Environment variables (e.g., PostgreSQL URL)
 ├── README.md            # Project overview and setup instructions
+├── main.go              
 ```
 
 ## Setup Instructions
@@ -48,7 +49,8 @@ CREATE TABLE lego_table (
 
 ## API Endpoints
 
-- `GET /legosets`: Fetches a list of Lego sets from the database.
+- `GET /api/sets`: Fetches a list of Lego sets from the database.
+- `GET /api/sets{id}`: Fetches a specific set of Lego sets from the database.
 
 ## License
 

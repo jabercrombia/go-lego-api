@@ -1,7 +1,18 @@
 {
     "version": 2,
     "routes": [
-      { "src": "/api/(.*)", "dest": "/api/$1.go" },
+      {
+        "src": "/api/sets/([0-9]+)",
+        "dest": "/api/sets.go"
+      },
+      {
+        "src": "/api/sets",
+        "dest": "/api/sets.go"
+      },
+      {
+        "src": "/swagger/(.*)",
+        "dest": "/swagger/$1"
+      },
       {
         "src": "^/$",
         "dest": "/static/index.html"

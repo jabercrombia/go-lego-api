@@ -8,36 +8,42 @@ import (
 
 	_ "go-lego-api/docs" // Swag will generate this
 
+	"github.com/gorilla/mux"
 	"github.com/joho/godotenv"
-	httpSwagger "github.com/swaggo/http-swagger"
 )
 
 func main() {
-	// Load environment variables from .env file
 	err := godotenv.Load()
 	if err != nil {
 		log.Fatal("Error loading .env file")
 	}
 
-	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
-		if r.URL.Path == "/" {
-			http.ServeFile(w, r, "./static/index.html")
-		} else {
-			http.NotFound(w, r)
-		}
-	})
+	// Set up the mux router
+	r := mux.NewRouter()
 
+	// Handle the Swagger UI
+	// r.Handle("/swagger/", httpSwagger.WrapHandler)
+
+	// Serve the static files
 	fs := http.FileServer(http.Dir("./static"))
-	http.Handle("/static/", http.StripPrefix("/static/", fs))
+	r.PathPrefix("/static/").Handler(http.StripPrefix("/static/", fs))
 
-	// CRUD routes for Lego sets
-	http.HandleFunc("/api/sets", api.GetAllLegoSets) // GET all sets
+	// Route to get all sets
+	r.HandleFunc("/api/sets", api.GetAllLegoSets).Methods("GET")
 
-	http.Handle("/swagger/", httpSwagger.WrapHandler)
+	// Route to get a specific set by ID
+	r.HandleFunc("/api/sets/{id:[0-9]+}", api.GetLegoSetByID).Methods("GET") // Ensure that ID matches only numbers
 
+	// Serve Swagger UI
+	http.Handle("/swagger/", http.StripPrefix("/swagger/", http.FileServer(http.Dir("./swagger-ui"))))
+
+	// Set the port
 	port := os.Getenv("PORT")
 	if port == "" {
 		port = "8080"
 	}
-	http.ListenAndServe(":"+port, nil)
+
+	// Start the server
+	log.Printf("Server is running on port %s...", port)
+	log.Fatal(http.ListenAndServe(":"+port, r))
 }
