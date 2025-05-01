@@ -1,0 +1,26 @@
+info:
+  contact: {}
+paths:
+  /api/lego:
+    get:
+      description: Returns a list of LEGO sets from the database
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              additionalProperties: true
+              type: object
+            type: array
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Get LEGO sets
+      tags:
+      - lego
+swagger: "2.0"

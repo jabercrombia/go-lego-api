@@ -6,7 +6,10 @@ import (
 	"net/http"
 	"os"
 
+	_ "go-lego-api/docs" // Swag will generate this
+
 	"github.com/joho/godotenv"
+	httpSwagger "github.com/swaggo/http-swagger"
 )
 
 func main() {
@@ -27,17 +30,14 @@ func main() {
 	fs := http.FileServer(http.Dir("./static"))
 	http.Handle("/static/", http.StripPrefix("/static/", fs))
 
-	http.HandleFunc("/api/sets", Handler)
-	http.HandleFunc("/api/lego", api.LegoHandler)
+	// CRUD routes for Lego sets
+	http.HandleFunc("/api/sets", api.GetAllLegoSets) // GET all sets
+
+	http.Handle("/swagger/", httpSwagger.WrapHandler)
 
 	port := os.Getenv("PORT")
 	if port == "" {
 		port = "8080"
 	}
 	http.ListenAndServe(":"+port, nil)
-}
-
-func Handler(w http.ResponseWriter, r *http.Request) {
-	w.Header().Set("Content-Type", "application/json")
-	w.Write([]byte(`{"message": "Hello from /api/sets"}`))
 }
