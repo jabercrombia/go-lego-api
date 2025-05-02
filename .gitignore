@@ -27,3 +27,4 @@ go.work.sum
 vercel.json
 .DS_Store
 package-lock.json
+.package-lock.json
