@@ -6,8 +6,8 @@
         "dest": "/api/sets.go"
       },
       {
-        "src": "/api/sets",
-        "dest": "/api/sets.go"
+        "src": "/api/allsets",
+        "dest": "/api/allsets.go"
       },
       {
         "src": "/swagger/(.*)",

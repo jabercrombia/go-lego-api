@@ -1,5 +1,5 @@
 
-# Go Lego API
+# Lego API
 
 This project is a simple Go API that connects to a PostgreSQL database and provides an endpoint to fetch data about Lego sets. The data is retrieved from the `lego_table` in the PostgreSQL database.
 

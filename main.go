@@ -9,6 +9,8 @@ import (
 	_ "go-lego-api/docs" // Swag will generate this
 
 	"github.com/gorilla/mux"
+	httpSwagger "github.com/swaggo/http-swagger"
+
 	"github.com/joho/godotenv"
 )
 
@@ -29,15 +31,12 @@ func main() {
 	r.PathPrefix("/static/").Handler(http.StripPrefix("/static/", fs))
 
 	// Route to get all sets
-	r.HandleFunc("/api/sets", api.GetAllLegoSets).Methods("GET")
+	r.HandleFunc("/api/allsets", api.GetAllLegoSets).Methods("GET")
 
 	// Route to get a specific set by ID
+	// redo this it might be the issue
 	r.HandleFunc("/api/sets/{id:[0-9]+}", api.GetLegoSetByID).Methods("GET") // Ensure that ID matches only numbers
-
-	// Serve Swagger UI
-	http.Handle("/swagger/", http.StripPrefix("/swagger/", http.FileServer(http.Dir("./swagger-ui"))))
-
-	// Set the port
+	r.PathPrefix("/docs/").Handler(httpSwagger.WrapHandler)                  // Set the port
 	port := os.Getenv("PORT")
 	if port == "" {
 		port = "8080"

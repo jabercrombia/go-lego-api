@@ -10,17 +10,37 @@ import (
 	_ "github.com/lib/pq" // PostgreSQL driver
 )
 
-// GetLegoSetByID godoc
-// @Summary Get a LEGO set by ID
-// @Description Retrieves a LEGO set by its ID
+// Helper functions for nullable fields
+func getNullableString(value sql.NullString) string {
+	if value.Valid {
+		return value.String
+	}
+	return ""
+}
+
+func getNullableInt(value sql.NullInt32) int {
+	if value.Valid {
+		return int(value.Int32)
+	}
+	return 0
+}
+
+func getNullableFloat(value sql.NullFloat64) float64 {
+	if value.Valid {
+		return value.Float64
+	}
+	return 0.0
+}
+
+// GetAllLegoSets godoc
+// @Summary Get all LEGO sets
+// @Description Returns a list of all LEGO sets in the database
 // @Tags lego
 // @Produce json
-// @Param id path int true "LEGO Set ID"
-// @Success 200 {object} map[string]interface{}
-// @Failure 404 {object} map[string]string
+// @Success 200 {array} map[string]interface{}
 // @Failure 500 {object} map[string]string
-// @Router /api/sets/{id} [get]
-func GetLegoSetByID(w http.ResponseWriter, r *http.Request) {
+// @Router /api/sets [get]
+func GetAllLegoSets(w http.ResponseWriter, r *http.Request) {
 	// Retrieve DB connection URL from environment variable
 	dbURL := os.Getenv("POSTGRES_URL")
 	if dbURL == "" {
@@ -36,16 +56,8 @@ func GetLegoSetByID(w http.ResponseWriter, r *http.Request) {
 	}
 	defer db.Close()
 
-	// Get the set ID from the URL parameters
-	id := r.URL.Path[len("/api/sets/"):]
-
-	if id == "" {
-		http.Error(w, "ID is required", http.StatusBadRequest)
-		return
-	}
-
 	// Query database to fetch Lego sets
-	rows, err := db.Query("SELECT set_id, name, year, theme, subtheme, themegroup, category, pieces, minifigs, agerange_min, us_retailprice, brickseturl, thumbnailurl, imageurl, id FROM lego_table WHERE id = $1", id)
+	rows, err := db.Query("SELECT set_id, name, year, theme, subtheme, themegroup, category, pieces, minifigs, agerange_min, us_retailprice, brickseturl, thumbnailurl, imageurl, id FROM lego_table LIMIT 10")
 	if err != nil {
 		http.Error(w, fmt.Sprintf("Query error: %v", err), http.StatusInternalServerError)
 		return

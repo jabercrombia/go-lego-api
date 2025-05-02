@@ -1,0 +1,11 @@
+nav {
+    a {
+        text-transform: capitalize;
+    }
+    a:hover {
+        color: #ccc;
+    }
+    a[data-slot] {
+        background-color: transparent;
+    }
+}
