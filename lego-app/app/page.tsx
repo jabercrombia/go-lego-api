@@ -1,12 +1,19 @@
+import Link from "next/link"
+
 
 export default function Home() {
   return (
-    <div className="h-screen flex items-center justify-center">
-        <div className="bg-white p-6 rounded shadow w-1/2 mx-auto">
-            <h1 className="text-3xl">LEGO SETS API</h1>
-            <p className="text-2xl font-light">Welcome to my Lego sets API, your gateway to discovering the world of LEGO® sets. This project leverages Next.js for a fast, responsive frontend and Go (Golang) for a powerful backend API, 
-              enabling efficient data handling and seamless user experience across pages.</p>
-        </div>
+    <div className="grid grid-cols-2 container mx-auto pt-10">
+      <div>
+          <h1 className="text-5xl">The Ultimate LEGO Set API for Developers</h1>
+          <p className="text-xl font-light pt-4">Welcome to my Lego sets API, your gateway to discovering the world of LEGO® sets. This project leverages Next.js for a fast, responsive frontend and Go (Golang) for a powerful backend API, 
+            enabling efficient data handling and seamless user experience across pages.</p>
+            <Link href="/docs/">
+            <button className="primary">View Documentation</button>
+            </Link>
+      </div>
+      <div>
+      </div>
     </div>
   );
 }

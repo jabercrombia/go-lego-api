@@ -24,8 +24,11 @@ const navigation = [
 
 export default function HomePage() {
   return (
-    <nav>
-        <div className="flex gap-3 container mx-auto">
+    <nav className="flex justify-stretch gap-20">
+        <div className="justify-self-start">
+        Lego Set API
+        </div>
+        <div className="flex gap-3">
             {
                 navigation.map((elem, index) =>{
                     return (

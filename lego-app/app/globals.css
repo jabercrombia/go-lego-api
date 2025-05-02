@@ -125,3 +125,17 @@ body {
     @apply bg-background text-foreground;
   }
 }
+
+button {
+  padding: 10px 15px;
+  cursor: pointer;
+  border-radius: 10px;
+  margin: 15px 0;
+  color: white;
+  &:hover {
+    opacity: 0.8;
+  }
+  &.primary {
+    background-color: grey;
+  }
+}
