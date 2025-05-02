@@ -10,16 +10,12 @@
         "dest": "/api/allsets.go"
       },
       {
-        "src": "/swagger/(.*)",
-        "dest": "/swagger/$1"
+        "src": "/docs/(.*)",
+        "dest": "/docs/$1"
       },
       {
         "src": "^/$",
-        "dest": "/static/index.html"
-      },
-      {
-        "src": "^/static/(.*)$",
-        "dest": "/static/$1"
+        "dest": "/lego-app/"
       }
     ]
   }

@@ -39,7 +39,7 @@ func getNullableFloat(value sql.NullFloat64) float64 {
 // @Produce json
 // @Success 200 {array} map[string]interface{}
 // @Failure 500 {object} map[string]string
-// @Router /api/sets [get]
+// @Router /api/allsets [get]
 func GetAllLegoSets(w http.ResponseWriter, r *http.Request) {
 	// Retrieve DB connection URL from environment variable
 	dbURL := os.Getenv("POSTGRES_URL")

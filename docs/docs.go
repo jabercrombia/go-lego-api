@@ -15,7 +15,7 @@ const docTemplate = `{
     "host": "{{.Host}}",
     "basePath": "{{.BasePath}}",
     "paths": {
-        "/api/sets": {
+        "/api/allsets": {
             "get": {
                 "description": "Returns a list of all LEGO sets in the database",
                 "produces": [
