@@ -19,7 +19,7 @@ import (
 
 func main() {
 
-	err := godotenv.Load()
+	err := godotenv.Load("../.env")
 	if err != nil {
 		fmt.Println("Error loading .env file")
 	}
@@ -32,9 +32,6 @@ func main() {
 
 	// Set up the mux router
 	r := mux.NewRouter()
-
-	// Handle the Swagger UI
-	// r.Handle("/swagger/", httpSwagger.WrapHandler)
 
 	// Serve the static files
 	fs := http.FileServer(http.Dir("./static"))

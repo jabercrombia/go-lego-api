@@ -25,3 +25,4 @@ go.work.sum
 .env
 .vercel
 .DS_Store
+package-lock.json
