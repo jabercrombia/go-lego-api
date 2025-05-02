@@ -17,6 +17,14 @@
     {
       "src": "/(.*)",
       "dest": "lego-app/$1"
+    },
+    {
+      "src": "/api/sets/([0-9]+)",
+      "dest": "/api/sets.go"
+    },
+    {
+      "src": "/api/sets",
+      "dest": "/api/sets.go"
     }
   ]
 }
