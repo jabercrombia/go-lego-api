@@ -32,6 +32,7 @@ func main() {
 	// API routes
 	r.HandleFunc("/api/allsets", api.GetAllLegoSets).Methods("GET")
 	r.HandleFunc("/api/sets/{id:[0-9]+}", api.GetLegoSetByID).Methods("GET")
+	r.HandleFunc("/api/health", api.HealthCheck).Methods("GET")
 
 	// Swagger docs
 	r.PathPrefix("/docs/").Handler(httpSwagger.WrapHandler)
