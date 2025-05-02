@@ -1,57 +1,122 @@
 
-# Lego API
+# LEGO App
 
-This project is a simple Go API that connects to a PostgreSQL database and provides an endpoint to fetch data about Lego sets. The data is retrieved from the `lego_table` in the PostgreSQL database.
+## Project Description
 
-## Project Structure
+LEGO App is a web application built with Next.js for the frontend and Go (Golang) for the backend API. The app displays LEGO sets and their details, including their names, themes, prices, and images. It fetches LEGO set data from a PostgreSQL database and provides an interactive UI to display this information.
+
+This project demonstrates how to integrate a Go backend API with a Next.js frontend. It also showcases the use of tools like Swagger for API documentation and Vercel for deploying both frontend and backend in the same project repository.
+
+## Project File Structure
+
+Here is the general file structure of the project:
 
 ```
-go-lego-api/
-├── api/
-│   └── sets.go          # API entry point 
-├── sql/
-|   └── lego_sets.sql    # SQL file with schema and sample LEGO data
-├── .env                 # Environment variables (e.g., PostgreSQL URL)
-├── README.md            # Project overview and setup instructions
-├── main.go              
+/lego-app                  # Next.js frontend
+├── /pages                 # Contains Next.js page files
+│   ├── index.tsx          # Landing page (Home)
+│   └── api                # Contains API route handlers (next.js API routes)
+│       └── lego.ts         # Example API route for fetching LEGO data
+├── /components            # React components used in the app
+│   ├── Navigation.tsx     # Navigation bar component
+│   └── LegoSetCard.tsx    # Component to display a single LEGO set
+├── /public                # Public assets (images, etc.)
+├── /styles                # Global styles (Tailwind, CSS, etc.)
+├── /utils                 # Utility functions (e.g., data fetchers)
+├── /swagger               # Swagger API documentation files
+│   └── swagger.json       # Swagger JSON file for API documentation
+└── next.config.js         # Configuration for Next.js app
+
+/lego-go                    # Go (Golang) backend
+├── /main.go               # Main Go file where the server starts
+├── /api                   # Go API files (e.g., handlers, routes)
+│   └── lego.go            # Go code for handling LEGO data API
+├── /models                # Go structs for models (e.g., LEGO set model)
+└── .env                   # Environment variables for Go (e.g., PostgreSQL URL)
 ```
 
-## Setup Instructions
+## Getting Started
 
-1. Clone the repository:
+### Prerequisites
+
+- [Node.js](https://nodejs.org/) (for Next.js frontend)
+- [Go](https://golang.org/) (for Go backend)
+- [PostgreSQL](https://www.postgresql.org/) (for storing LEGO set data)
+
+### Installation
+
+#### 1. Clone the repository
 
 ```bash
-git clone https://github.com/jabercrombia/go-lego-api.git
-cd go-lego-api
+git clone https://github.com/your-username/lego-app.git
+cd lego-app
 ```
 
-2. Create a `.env` file at the root of the project and add your PostgreSQL connection URL:
-   
-   ```
-   POSTGRES_URL=your_postgres_connection_url
-   ```
+#### 2. Setup Go backend
 
-3. Make sure you have Go and PostgreSQL installed.
+- Navigate to the `lego-go` directory:
 
-4. Once the server is running, you can access the API at `http://localhost:8080/legosets`.
+```bash
+cd lego-go
+```
 
-## Lego Table Schema (`lego_sets.sql`)
+- Install Go dependencies:
 
-Here is the SQL schema to set up the `lego_table` in PostgreSQL:
+```bash
+go mod tidy
+```
 
-```sql
-CREATE TABLE lego_table (
-  id SERIAL PRIMARY KEY,
-  name VARCHAR(255),
-  theme VARCHAR(255),
-  thumbnailurl VARCHAR(255)
-);
+- Setup environment variables by creating an `.env` file (make sure to specify the `POSTGRES_URL`):
 
-## API Endpoints
+```bash
+touch .env
+```
 
-- `GET /api/sets`: Fetches a list of Lego sets from the database.
-- `GET /api/sets{id}`: Fetches a specific set of Lego sets from the database.
+```bash
+# .env file
+POSTGRES_URL=your-postgres-database-url
+```
 
-## License
+#### 3. Setup Next.js frontend
 
-This project is open-source and available under the [MIT License](LICENSE).
+- Navigate to the `lego-app` directory:
+
+```bash
+cd ../lego-app
+```
+
+- Install dependencies:
+
+```bash
+npm install
+```
+
+### Running the Application
+
+#### 1. Start the Go backend API:
+
+```bash
+cd lego-go
+go run main.go
+```
+
+This will start the Go API on `http://localhost:8080`.
+
+#### 2. Start the Next.js frontend:
+
+```bash
+cd lego-app
+npm run dev
+```
+
+This will start the Next.js frontend on `http://localhost:3000`.
+
+### API Documentation
+
+You can view the Swagger API documentation at `/docs` endpoint in the browser.
+
+---
+
+### License
+
+MIT License
