@@ -48,7 +48,7 @@ Here is the general file structure of the project:
 #### 1. Clone the repository
 
 ```bash
-git clone https://github.com/your-username/lego-app.git
+git clone https://github.com/jabercrombia/lego-app.git
 cd lego-app
 ```
 
