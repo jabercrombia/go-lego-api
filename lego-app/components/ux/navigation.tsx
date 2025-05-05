@@ -16,20 +16,20 @@ import {
   } from "@/components/ui/navigation-menu"
   
 
-const navigation = [
-    {
-        'name': 'home',
-        'path': '/'
-    },
-    {
-        'name': 'docs',
-        'path': '/docs'
-    },
-    {
-        'name': 'endpoints',
-        'path': '/api/allsets'
-    },
-];
+// const navigation = [
+//     {
+//         'name': 'home',
+//         'path': '/'
+//     },
+//     {
+//         'name': 'docs',
+//         'path': '/docs'
+//     },
+//     {
+//         'name': 'endpoints',
+//         'path': '/api/allsets'
+//     },
+// ];
 
 
 
