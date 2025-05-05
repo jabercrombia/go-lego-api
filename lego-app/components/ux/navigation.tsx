@@ -24,11 +24,17 @@ const navigation = [
 
 export default function HomePage() {
   return (
-    <nav className="flex justify-stretch gap-20">
-        <div className="justify-self-start">
-        Lego Set API
+    <nav className="flex flex-row gap-2">
+        <div className="flex items-center">
+            <div className="h-[20px] w-[20px] bg-yellow-300 rounded-md"></div>
+            <div className="w-[100px]">
+                <Link href="/">
+                    Lego Set API
+                </Link>
+            </div>
         </div>
-        <div className="flex gap-3">
+
+        <div className="flex pl-20 gap-7">
             {
                 navigation.map((elem, index) =>{
                     return (

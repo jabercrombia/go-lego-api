@@ -44,8 +44,8 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body>
-        <div className={` ${lato.className} min-h-screen flex flex-col`}>
+      <body className={lato.className}>
+        <div className="min-h-screen flex flex-col">
           <Header/>
             <main className="flex-1">
               {children}  
