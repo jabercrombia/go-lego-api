@@ -7,7 +7,7 @@ export default function HomePage() {
   const [legoSets, setLegoSets] = useState([]);
 
   useEffect(() => {
-    fetch(process.env.FRONT_END_URL+'/api/allsets')
+    fetch(process.env.NEXT_PUBLIC_FRONT_END_URL+'/api/allsets')
       .then((res) => res.json())
       .then((data) => setLegoSets(data))
       .catch((err) => console.error('Error fetching data:', err));
