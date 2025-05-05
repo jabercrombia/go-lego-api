@@ -1,6 +1,6 @@
 
 # LEGO App
-
+![homepage image](lego-app/public/homepage.png)
 ## Project Description
 
 LEGO App is a web application built with Next.js for the frontend and Go (Golang) for the backend API. The app displays LEGO sets and their details, including their names, themes, prices, and images. It fetches LEGO set data from a PostgreSQL database and provides an interactive UI to display this information.
