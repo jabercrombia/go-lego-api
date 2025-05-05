@@ -5,9 +5,9 @@ import Footer from "../components/footer"
 import { GoogleAnalytics } from '@next/third-parties/google'
 
 import Header from "../components/header"
-import { Lato } from 'next/font/google'
+import { Roboto } from 'next/font/google'
 
-const lato = Lato({
+const roboto = Roboto({
   weight: ['100','300','400','700','900'],
   subsets: ['latin'],
 })
@@ -43,8 +43,8 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
-      <body className={lato.className}>
+    <html lang="en" className={roboto.className}>
+      <body>
         <div className="min-h-screen flex flex-col">
           <Header/>
             <main className="flex-1">
