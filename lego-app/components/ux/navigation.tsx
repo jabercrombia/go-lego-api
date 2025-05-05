@@ -4,6 +4,7 @@ import * as React from "react"
 import Link from "next/link"
 import "../../styles/nav.scss"
 import { cn } from "@/lib/utils"
+import Image from 'next/image';
 import {
   NavigationMenu,
   NavigationMenuContent,
@@ -19,20 +20,35 @@ const components: { title: string; href: string; description: string }[] = [
     title: "All Lego Sets",
     href: "/api/allsets",
     description:
-      "Retrieves a list of all LEGO sets, including set names, numbers, themes, release years, and piece counts.",
+      "Retrieves a list of all LEGO sets.",
   },
   {
     title: "Specific Sets",
     href: "/api/sets/1",
     description:
-      "Returns detailed information about a specific LEGO set, including its name, number, theme, year, minifigures, and parts, based on the provided set ID.",
+      "Returns detailed information about a specific LEGO set, with provided set ID.",
   }
 ]
 
 export default function NavigationMenuDemo() {
   return (
-    <NavigationMenu>
+    <div>
+    
+        <NavigationMenu>
       <NavigationMenuList>
+      <NavigationMenuItem>
+          <Link href="/" legacyBehavior passHref>
+            <NavigationMenuLink className={navigationMenuTriggerStyle()}>
+            <Image
+      src="/images/lego_head.png"  // can be local or remote
+      alt="Lego Set"
+      width={20}
+      height={20}
+      className="rounded shadow"
+    />
+            </NavigationMenuLink>
+          </Link>
+        </NavigationMenuItem>
         <NavigationMenuItem>
           <Link href="/" legacyBehavior passHref>
             <NavigationMenuLink className={navigationMenuTriggerStyle()}>
@@ -48,7 +64,7 @@ export default function NavigationMenuDemo() {
           </Link>
         </NavigationMenuItem>
         <NavigationMenuItem>
-          <NavigationMenuTrigger>Components</NavigationMenuTrigger>
+          <NavigationMenuTrigger>Endpoints</NavigationMenuTrigger>
           <NavigationMenuContent>
             <ul className="grid w-[400px] gap-3 p-4 md:w-[500px] md:grid-cols-2 lg:w-[600px] ">
               {components.map((component) => (
@@ -65,6 +81,7 @@ export default function NavigationMenuDemo() {
         </NavigationMenuItem>
       </NavigationMenuList>
     </NavigationMenu>
+    </div>
   )
 }
 
@@ -83,8 +100,8 @@ const ListItem = React.forwardRef<
           )}
           {...props}
         >
-          <div className="text-sm font-medium leading-none">{title}</div>
-          <p className="line-clamp-2 text-sm leading-snug text-muted-foreground">
+          <div className="text-left text-sm font-medium leading-none">{title}</div>
+          <p className="text-left line-clamp-2 text-sm leading-snug text-muted-foreground">
             {children}
           </p>
         </a>

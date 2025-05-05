@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"go-lego-api/api"
 	"log"
 	"net/http"
@@ -22,10 +23,12 @@ func main() {
 		log.Println("Error loading .env file")
 	}
 
-	frontendURL := os.Getenv("FRONT_END_URL")
-	if frontendURL == "" {
+	if os.Getenv("FRONT_END_URL") == "" {
 		log.Fatal("Please set the FRONT_END_URL environment variable")
 	}
+
+	log.Println("Error loading .env file")
+	fmt.Print("Hello, ")
 
 	r := mux.NewRouter()
 
@@ -38,7 +41,7 @@ func main() {
 
 	// CORS configuration
 	corsHandler := cors.New(cors.Options{
-		AllowedOrigins: []string{frontendURL},
+		AllowedOrigins: []string{os.Getenv("FRONT_END_URL")},
 		AllowedMethods: []string{"GET"},
 		AllowedHeaders: []string{"Content-Type"},
 	}).Handler(r)
